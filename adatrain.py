@@ -126,28 +126,6 @@ def extract_embeddings_and_params(model):
 
     return np.array(embeddings), step_lengths, prompts, temperatures, token_limits
 
-def plot_kde_heatmaps(embeddings, param, title):
-    if embeddings.shape[1] > 2:
-        pca = PCA(n_components=2)
-        reduced_embeddings = pca.fit_transform(embeddings)
-    else:
-        reduced_embeddings = embeddings
-
-    x, y = reduced_embeddings[:, 0], reduced_embeddings[:, 1]
-
-    # Kernel Density Estimation
-    xy = np.vstack([x, y])
-    kde = gaussian_kde(xy, weights=param)  # Weighted estimation
-    z = kde(xy)
-
-    # Plot heatmap
-    plt.figure(figsize=(10, 8))
-    plt.scatter(x, y, c=z, cmap='viridis', s=100)
-    plt.colorbar(label=f'{title}')
-    plt.title(f'{title} Heatmap (KDE)')
-    plt.xlabel('Principal Component 1')
-    plt.ylabel('Principal Component 2')
-    plt.show()
 
 
 # Initialize semantic model for embedding-based evaluations
@@ -158,75 +136,7 @@ logic_tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
 logic_model = AutoModelForSequenceClassification.from_pretrained("bert-base-uncased")
 
 
-def compute_answer_similarity(candidate_answers):
-    
-    embeddings = semantic_model.encode(candidate_answers, convert_to_tensor=True)
-    similarity_matrix = util.pytorch_cos_sim(embeddings, embeddings).cpu().numpy()
-    return similarity_matrix
 
-def cluster_answers(candidate_answers, threshold=0.8):
-    
-    if len(candidate_answers) == 1:
-        return [candidate_answers]
-
-    similarity_matrix = compute_answer_similarity(candidate_answers)
-
-    
-    clustering = AgglomerativeClustering(
-        n_clusters=None,
-        affinity="precomputed",
-        linkage="average",
-        distance_threshold=1 - threshold
-    )
-    labels = clustering.fit_predict(1 - similarity_matrix)
-
-    
-    clustered_answers = defaultdict(list)
-    for i, label in enumerate(labels):
-        clustered_answers[label].append(candidate_answers[i])
-
-    return list(clustered_answers.values())
-
-def select_cluster_representative(cluster, question, reward_function=None):
-    
-    if reward_function:
-        
-        scores = [reward_function(ans, question) for ans in cluster]
-        best_idx = np.argmax(scores)
-        return cluster[best_idx]
-    else:
-        if len(cluster) == 1:
-            return cluster[0]
-        
-        embeddings = semantic_model.encode(cluster, convert_to_tensor=True)
-        sim_matrix = util.pytorch_cos_sim(embeddings, embeddings).cpu().numpy()
-        
-        avg_sim = sim_matrix.mean(axis=1)
-        best_idx = np.argmax(avg_sim)
-        return cluster[best_idx]
-
-def select_best_answer(candidate_answers, question, temperature=0.7, token_limit=512, reward_function=None):
-    
-    clustered_answers = cluster_answers(candidate_answers, threshold=0.8)
-
-    
-    cluster_votes = {}
-    for cluster in clustered_answers:
-        
-        representative_answer = select_cluster_representative(cluster, question, reward_function)
-
-        
-        if reward_function:
-            weight = sum([reward_function(ans, question) for ans in cluster])
-        else:
-            weight = len(cluster)
-
-        cluster_votes[representative_answer] = weight
-
-    
-    best_answer = max(cluster_votes, key=cluster_votes.get)
-
-    return best_answer
 
 class NumpyEncoder(json.JSONEncoder):
     """
@@ -252,11 +162,9 @@ async def run_pipeline_async(question_data, prompt_template, prompt, step_length
         formatted_prompt = prompt_template.format(
             question=question_data['question'],
             instruction_prompt=prompt,
-            optimal_steps=step_length,
-            #previousones=previous_outputs
+            optimal_steps=step_length
         )
 
-        #print(formatted_prompt)
 
         # Use asyncio.gather and run_in_executor to call get_response
         tasks = [loop.run_in_executor(None, get_response, eval_model, formatted_prompt, temperature) # use eval_model here
@@ -335,8 +243,7 @@ def evaluate_few_shot_with_multiple_responses(ts_model, task, shots, eval_model)
 
         print("Few-shot training completed.")
 
-        ts_model.save_parameters('./knowledge/MMLU.pkl')
-        #ts_model.plot_reward_heatmap(save_path='0223.png')
+        ts_model.save_parameters('./gpt4o.pkl')
 
 
         f.write("\n]")  # Close the JSON array

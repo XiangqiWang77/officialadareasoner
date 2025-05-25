@@ -306,21 +306,12 @@ def evaluate_few_shot_with_multiple_responses(ts_model, task, shots, eval_model)
 
 
             if best_responses:
-                #reward = evaluate_responses1(question_data['question'], ground_truth, best_responses)
-                #tem_action=step_length, prompt, temperature
-                #ts_model.update(context, reward, current_action,idx)
-
-                #print(f"Few-shot Question {idx + 1}: Best Reward: {reward}")
-                #print(f"Best Responses: {best_responses}")
 
                 # Save few-shot results
                 result = {
                     "question": question_data['question'],
                     "ground_truth": question_data['answer'],
                     "best_responses": best_responses,
-                    #"best_candidate": best_candidate,
-                    #"best_reward": float(reward),
-                    #"attempts": int(attempts),
                     "current_action": [
                         int(current_action[0]) if isinstance(current_action[0], np.integer) else current_action[0],
                         str(current_action[1]),

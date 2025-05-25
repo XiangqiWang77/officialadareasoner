@@ -12,8 +12,6 @@ from functools import wraps
 
 load_dotenv()
 
-#os.environ['http_proxy'] = os.getenv('HTTP_PROXY')
-#os.environ['https_proxy'] = os.getenv('HTTPS_PROXY')
 
 
 class TokenLogger:

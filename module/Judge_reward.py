@@ -3,10 +3,7 @@ from transformers import pipeline
 
 judge_classifier = pipeline("zero-shot-classification", model="facebook/bart-large-mnli")
 
-#judge_classifier = pipeline(
-#    "zero-shot-classification",
-#    model="cross-encoder/nli-distilroberta-base"
-#)
+
 import numpy as np
 def add_gaussian_perturbation(x, sigma=0.1):
     perturbation = np.random.normal(0, sigma)
@@ -38,10 +35,7 @@ def compute_judge_score(question: str, candidate: str, reference: str) -> float:
 
 def evaluate_responses1(question: str, reference: str, candidate: str) -> float:
     
-    #print("Evaluating candidate answer...")
-    #print("Question:", question)
-    #print("Candidate Answer:", candidate)
-    #print("Ground Truth:", reference)
+
     
     score = compute_judge_score(question, candidate, reference)
     
