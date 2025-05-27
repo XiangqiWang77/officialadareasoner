@@ -170,18 +170,19 @@ AdaReasoner demonstrates superior performance across diverse reasoning tasks:
 
 | Method | Metaphor | TruthfulQA | MMLU (Math) | LogiQA | **Average** |
 |--------|----------|------------|-------------|---------|-------------|
-| Direct Answer | 45.20 | 72.30 | 68.15 | 65.40 | 62.76 |
-| Simple CoT | 50.40 | 78.40 | 76.04 | 70.00 | 68.71 |
+| CoT | 50.40 | 78.40 | 76.04 | 70.00 | 68.71 |
+| Think Short | 61.00 | 64.81 | 68.52 | 70.81 | 66.28 |
+| ToT | 48.25 | 74.29 | 86.11 | 73.90 | 70.91 |
+| Best-of-N | 52.60 | 79.41 | 83.41 | 72.37 | 71.95 |
 | Auto-CoT | 62.33 | 83.09 | 72.15 | 71.71 | 72.32 |
-| Tree-of-Thought | 58.90 | 80.25 | 78.92 | 74.15 | 73.06 |
-| Best-of-N (N=5) | 65.78 | 84.12 | 81.33 | 76.89 | 77.03 |
+| In-context CoT | 53.98 | 77.04 | 83.63 | 80.04 | 74.42 |
 | **AdaReasoner** | **71.56** | **81.30** | **86.49** | **82.31** | **80.42** |
 
 ### 📈 Performance Improvements
 
-- **+8.1%** average improvement over best baseline
-- **+11.8%** improvement on complex reasoning tasks
-- **Consistent gains** across all evaluated LLMs
+- **+6.0%** average improvement over best baseline (In-context CoT)
+- **+11.7%** improvement on complex reasoning tasks (Metaphor)
+- **Consistent gains** across all evaluated datasets
 
 ### 🎯 Cross-Model Evaluation
 
