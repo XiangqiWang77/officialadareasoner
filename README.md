@@ -320,7 +320,6 @@ For questions, suggestions, or collaborations:
 
 - 📧 Email: [xwang76@nd.edu](mailto:xwang76@nd.edu)
 - 🐛 Issues: [GitHub Issues](https://github.com/your-username/AdaReasoner/issues)
-- 💬 Discussions: [GitHub Discussions](https://github.com/your-username/AdaReasoner/discussions)
 
 ---
 
